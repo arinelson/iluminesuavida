@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-        <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-25YXPKXVVE"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-25YXPKXVVE');
-</script>
-        
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jornada Iluminada - Produtos para sua Fé</title>
@@ -36,6 +26,9 @@
             background: linear-gradient(to bottom, #FFDAB9, #FFC0CB, #87CEEB, #191970, #000033);
             color: #333;
             overflow-x: hidden; /* Previne scroll horizontal */
+        }
+        body.popup-open {
+            overflow: hidden; /* Previne scroll quando o pop-up está aberto */
         }
 
         h1, h2, h3 {
@@ -163,9 +156,50 @@
             0%, 100% { transform: translate(-50%, -50%) translateY(0); }
             50% { transform: translate(-50%, -50%) translateY(10px); }
         }
+        
+        /* Estilos para o pop-up */
+        @keyframes popup-show {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        #popup-content {
+            animation: popup-show 0.5s ease-out forwards;
+        }
     </style>
 </head>
 <body class="bg-white">
+    
+    <!-- Pop-up de Produto Aleatório -->
+    <div id="product-popup" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <!-- Fundo do pop-up -->
+        <div id="popup-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        
+        <!-- Conteúdo do pop-up -->
+        <div id="popup-content" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md text-center p-6 md:p-8 overflow-hidden">
+            <button id="popup-close-btn" class="absolute top-2 right-3 text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
+            <p class="text-sm font-semibold text-orange-500 mb-2">Encontramos algo especial para si!</p>
+            <img id="popup-img" src="" alt="Produto em destaque" class="w-full h-48 object-cover rounded-lg mb-4">
+            <h3 id="popup-title" class="text-2xl font-bold font-serif text-gray-800 mb-2"></h3>
+            <p id="popup-desc" class="text-gray-600 mb-6 text-sm"></p>
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a id="popup-link" href="#" class="w-full bg-gradient-to-br from-amber-400 to-orange-500 text-white font-bold py-3 px-6 rounded-lg hover:scale-105 transition-transform duration-300">
+                    Quero esta bênção!
+                </a>
+                <button id="popup-continue-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors">
+                    Continuar a ver
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Seção de Estrelas (no fundo) -->
     <div id="star-container" class="fixed top-0 left-0 w-full h-full z-0 pointer-events-none"></div>
@@ -181,13 +215,13 @@
             <div class="absolute inset-0 bg-black bg-opacity-40"></div>
             <div class="relative z-10 fade-in-section is-visible">
                 <!-- Imagem do Logo -->
-                <img src="https://i.imgur.com/KldYFkC.jpeg" alt="Logo Luz Crua" class="w-32 h-32 md:w-40 md:h-40 mx-auto mb-6 rounded-full shadow-lg border-2 border-white/50">
+                <img src="https://i.imgur.com/gY972gG.jpeg" alt="Logo Luz Crua" class="w-32 h-32 md:w-40 md:h-40 mx-auto mb-6 rounded-full shadow-lg border-2 border-white/50">
                 
                 <!-- Título com Animação -->
                 <h1 class="text-5xl md:text-7xl font-black mb-4 tracking-tight text-white">
                     Ilumine <span id="typewriter-text"></span><span class="typewriter-cursor"></span>
                 </h1>
-                <p class="text-lg md:text-2xl font-light max-w-3xl mx-auto">Produtos que inspiram e edificam sua jornada diária de fé.</p>
+                <p class="text-lg md:text-2xl font-light max-w-3xl mx-auto">Produtos que inspiram e edificam a sua jornada diária de fé.</p>
 
                 <!-- Botão para rolar para os produtos -->
                 <a href="#products" class="mt-8 inline-block border-2 border-white/70 text-white/90 font-semibold py-2 px-6 rounded-full hover:bg-white hover:text-gray-800 transition-colors duration-300">
@@ -377,14 +411,14 @@
                         timer.classList.remove('text-red-700');
                         timer.classList.add('text-gray-500');
                     } else {
-                        timer.innerHTML = `<span>Oferta termina em: </span><strong>${hours}h ${minutes}m ${seconds}s</strong>`;
+                        timer.innerHTML = `<span>A oferta termina em: </span><strong>${hours}h ${minutes}m ${seconds}s</strong>`;
                     }
                 }, 1000);
             });
 
             // Lógica da Animação de Digitação com Cores
             const typewriterElement = document.getElementById('typewriter-text');
-            const words = ['seu Caminho', 'sua Vida', 'sua Fé'];
+            const words = ['o seu Caminho', 'a sua Vida', 'a sua Fé'];
             const colors = ['#FFD700', '#FFB6C1', '#87CEFA']; // Dourado, Rosa, Azul
             let wordIndex = 0;
             let charIndex = 0;
@@ -393,7 +427,6 @@
             function type() {
                 const currentWord = words[wordIndex];
                 let displayText = '';
-
                 if (isDeleting) {
                     displayText = currentWord.substring(0, charIndex - 1);
                     charIndex--;
@@ -401,25 +434,20 @@
                     displayText = currentWord.substring(0, charIndex + 1);
                     charIndex++;
                 }
-                
                 typewriterElement.textContent = displayText;
-
                 let typeSpeed = isDeleting ? 100 : 200;
-
                 if (!isDeleting && charIndex === currentWord.length) {
                     typeSpeed = 2000;
                     isDeleting = true;
                 } else if (isDeleting && charIndex === 0) {
                     isDeleting = false;
                     wordIndex = (wordIndex + 1) % words.length;
-                    typewriterElement.style.color = colors[wordIndex]; // ATUALIZA A COR
+                    typewriterElement.style.color = colors[wordIndex];
                     typeSpeed = 500;
                 }
-
                 setTimeout(type, typeSpeed);
             }
-            
-            typewriterElement.style.color = colors[0]; // Define a cor inicial
+            typewriterElement.style.color = colors[0];
             type();
 
             // Lógica para a Seta Neon Fixa (Desktop)
@@ -429,29 +457,90 @@
 
             function handleArrowVisibility() {
                 if (!fixedArrow || !header || !footer) return;
-
-                // Previne a seta de aparecer em telas mobile
                 if (window.innerWidth < 768) {
                     if (!fixedArrow.classList.contains('hidden')) {
                         fixedArrow.classList.add('hidden');
                     }
                     return;
                 }
-                
                 const scrollPosition = window.scrollY;
                 const headerBottom = header.offsetHeight;
                 const footerTop = footer.offsetTop;
                 const windowBottom = scrollPosition + window.innerHeight;
-
                 if (scrollPosition > headerBottom - 100 && windowBottom < footerTop + 100) {
                     fixedArrow.classList.remove('hidden');
                 } else {
                     fixedArrow.classList.add('hidden');
                 }
             }
-
             window.addEventListener('scroll', handleArrowVisibility);
             window.addEventListener('resize', handleArrowVisibility);
+            
+            // --- Lógica do Pop-up de Produto Aleatório ---
+            const products = [
+                {
+                    title: 'Bíblia de Estudo Plenitude',
+                    description: 'Mergulhe profundamente na Palavra com notas, mapas e artigos que enriquecerão o seu entendimento das Escrituras.',
+                    image: 'https://placehold.co/600x400/FFDAB9/333333?text=B%C3%ADblia+de+Estudo',
+                    link: '#link-afiliado-1'
+                },
+                {
+                    title: 'Colar "Símbolo de Esperança"',
+                    description: 'Uma peça delicada e elegante para carregar uma lembrança constante do amor e sacrifício de Cristo. Feito em prata 925.',
+                    image: 'https://placehold.co/600x400/FFC0CB/333333?text=Colar+com+Cruz',
+                    link: '#link-afiliado-2'
+                },
+                {
+                    title: 'Devocional Pão Diário',
+                    description: 'Comece as suas manhãs com uma meditação inspiradora. 365 dias de reflexões para fortalecer a sua conexão com Deus.',
+                    image: 'https://placehold.co/600x400/87CEEB/333333?text=Devocional',
+                    link: '#link-afiliado-3'
+                },
+                {
+                    title: 'Quadro "O Senhor é o meu Pastor"',
+                    description: 'Decore o seu lar com a verdade da Palavra. Uma arte moderna e inspiradora para qualquer ambiente da sua casa.',
+                    image: 'https://placehold.co/600x400/191970/FFFFFF?text=Quadro+Vers%C3%ADculo',
+                    link: '#link-afiliado-4'
+                }
+            ];
+
+            const productPopup = document.getElementById('product-popup');
+            const popupImg = document.getElementById('popup-img');
+            const popupTitle = document.getElementById('popup-title');
+            const popupDesc = document.getElementById('popup-desc');
+            const popupLink = document.getElementById('popup-link');
+            const popupCloseBtn = document.getElementById('popup-close-btn');
+            const popupContinueBtn = document.getElementById('popup-continue-btn');
+            const popupOverlay = document.getElementById('popup-overlay');
+            let popupShown = false;
+
+            function showPopup() {
+                if (popupShown) return; // Mostra o pop-up apenas uma vez
+                popupShown = true;
+                
+                const randomProduct = products[Math.floor(Math.random() * products.length)];
+                
+                popupImg.src = randomProduct.image;
+                popupTitle.textContent = randomProduct.title;
+                popupDesc.textContent = randomProduct.description;
+                popupLink.href = randomProduct.link;
+                
+                productPopup.classList.remove('hidden');
+                document.body.classList.add('popup-open');
+            }
+
+            function hidePopup() {
+                productPopup.classList.add('hidden');
+                document.body.classList.remove('popup-open');
+            }
+
+            // Define o temporizador para 15 segundos
+            setTimeout(showPopup, 15000);
+
+            // Adiciona eventos para fechar o pop-up
+            popupCloseBtn.addEventListener('click', hidePopup);
+            popupContinueBtn.addEventListener('click', hidePopup);
+            popupOverlay.addEventListener('click', hidePopup);
         });
     </script>
 </body>
