@@ -26,6 +26,9 @@
             background: linear-gradient(to bottom, #FFDAB9, #FFC0CB, #87CEEB, #191970, #000033);
             color: #333;
             overflow-x: hidden; /* Previne scroll horizontal */
+            /* CORREÇÃO FOUC: Inicia o corpo invisível e prepara uma transição suave */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
         body.popup-open {
             overflow: hidden; /* Previne scroll quando o pop-up está aberto */
@@ -363,6 +366,9 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // CORREÇÃO FOUC: Torna o corpo visível após o carregamento
+            document.body.style.opacity = '1';
+
             // Lógica para animação de fade-in ao rolar
             const sections = document.querySelectorAll('.fade-in-section');
             const observer = new IntersectionObserver(entries => {
